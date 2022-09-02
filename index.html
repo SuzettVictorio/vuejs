@@ -8,70 +8,24 @@
 </head>
 <body>
     <div id="contenedor" >
-       <ol>
-        <h2>Pro del salón</h2>  
-        
-        <li v-for="alumno in palomilla">
-            {{alumno.name}}
-            {{alumno.role}}
+      <form> 
+        <fieldset> 
+            <legend> 
+                Datos de acceso
+            </legend>
 
-        </li>
-       </ol> 
-
-       <fieldset>
             <label>
-           edad
+                Correo electronico
+            </label> 
+            <input type="correo" required placeholder="correo">
+            <label>
+                Password
             </label>
-            <input type="text" v-model="age"name="">
-            
-            <h1 v-if="age >=18">
-                Pasele a pistear
-            </h1>
-            <h1 v-else>
-                Fuga pa la casa
-            </h1>
+           
+            <input type="password" required placeholder="password">
+            <button> Acceder </button>
         </fieldset>
-
-        
-
-        <h1>
-            {{name}}
-        </h1>
-
-        <p>
-            {{lastname}}
-        </p>
-
-       
-            <fieldset>
-                    <legend>Datos personales </legend>
-                        
-                   
-                    <input type="text" v-model="a_name" name="">
-                    <input type="text" v-model="role" name="">
-                   
-                    <button @click="addPalomilla">
-                       addPalomilla
-                   </button>
-            </fieldset>
-        
-        
-        
-            <fieldset>
-                    <legend>Calculadora</legend>
-                        
-                   
-                    <input type="text" v-model="numero1" name="">
-                    <input type="text" v-model="numero2" name="">
-                   
-                    <button @click="suma">
-                       Suma
-                   </button>
-                   <h1>
-                    {{resultado}}
-                   </h1>
-
-            </fieldset>
+      </form>
         
     </div>
 
@@ -80,39 +34,41 @@
         <script type="text/javascript">
         
         const { createApp } = Vue
-       
+        
+            
         const app = createApp({
                      data(){
                         return{
-                            name : '',
-                            lastname: '',
-                            resultado:0,
-                            numero1:0,
-                            numero2:0,
-                            age:0,
-                            palomilla:[
-                                {name:'Suzett',role:'backend'},
-                                {name:'Emmanuel',role:'frontend'},
-                                {name:'Isac',role:'dba'},
-                                {name:'Adrian',role:'dba'},
-                                {name:'Dara',role:'movil'}
-                            ]
+                           users:null,
+                           email:'',
+                           passsword:''
                         }
                     },
-                        methods:{
-                            saludar(){
-                                alert("hola:"+this.name+" "+this.lastname)
-                                },
-                                suma(){
-                                    this.resultado=parseInt(this.numero2)+ parseInt(this.numero1)
-                                },
-                                addPalomilla(){
-                                    this.palomilla.push({name:this.a_name,role:this.role});
-                                    this.a_name=""
-                                    this.role=""
+                    methods:{
+                        login(e){
+                            var tmp_mail = this.email
+                            var tmp_pwd = this.password
+                            var access = this.users.map(function(u){
+                                console.log()
+                                if(tmp_pwd === u.password){
+                                    alert("Acceso correcto")
+                                    //window
                                 }
-                            }
-                }).mount('#contenedor')
+                            
+                            
+                            })
+                           console.log(this.email)
+                           console.log(this.password)
+                            e.preventDefault()
+                        },
+                       mounted(){
+                        fetch('data/users.json')
+                        .then((res) => res.json())
+                        .then((json) => (this.users = json))
+                        .catch((err) => (alert('no data')))
+                       }
+                    }
+            }).mount('#contenedor')
     </script>
 
 
