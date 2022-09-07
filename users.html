@@ -11,35 +11,83 @@
    
     <div id="contenedor">
        <span> Bienvenido: {{ nameV }}</span>
-       <table>
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Sobrenombre</th>
-                <th>Correo</th>
-                <th>Teléfono</th>
-                <th>Página</th>
-                
-            </tr>
-        </thead>
-        <tbody>
-            <tr v-for="u in users">
-                
-                    <td>{{u.name}}</td>
-                    <td>{{u.username}}</td>
-                    <td>{{u.email}}</td>
-                    <td>{{u.phone}}</td>
-                    <td>{{u.website}}</td>
-                
-                <td>
-                    <button @click='Modificar'>Modificar</button>
-                    <button>Eliminar</button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+       
+       <div v-show="formulario">
+
+        <form action="" id="form">
+            <fieldset>
+                <legend>Registro de Usuario</legend>
+                <label for="">
+                    Nombre Completo:
+                    <input type="text" v-model="nameForm" required>
+                </label>
+                <hr>
+                <label for="">
+                    Sobrenombre:
+                    <input type="text" v-model="usernameForm" required>
+                </label>
+                <hr>
+                <label for="">
+                    Correo Electrónico:
+                    <input type="email" v-model="emailForm" required>
+                </label>
+                <hr>
+                <label for="">
+                    Contraseña:
+                    <input type="password" v-model="passwordForm" required>
+                </label>
+                <hr>
+                <label for="">
+                    Número Telefónico:
+                    <input type="text" v-model="phoneForm" required>
+                </label>
+                <hr>
+                <label for="">
+                    Página web:
+                    <input type="text" v-model="websiteForm" required>
+                </label>
+                <hr>
+                <button @click="register" type="submit">Entrar</button>
+            </fieldset>
+        </form>
 
     </div>
+
+    <div v-show="!formulario">
+        <fieldset>
+            <button @click="formulario=true">Añadir Usuario</button>
+            
+            <legend>Tabla de Usuarios </legend>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Sobrenombre</th>
+                        <th>Correo</th>
+                        <th>Teléfono</th>
+                        <th>Página</th>
+                        <th>Accciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="u in users">
+                        <td>{{u.name}}</td>
+                        <td>{{u.username}}</td>
+                        <td>{{u.email}}</td>
+                        <td>{{u.phone}}</td>
+                        <td>{{u.website}}</td>
+                        <td>
+                            <button>Modificar</button>
+                            <button>Eliminar</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+        </fieldset>
+    </div>
+    <button @click="cs">Cerrar Sesión</button>
+</div>
 
     <script src="https://unpkg.com/vue@3"></script>
     <script type="text/javascript">
@@ -47,38 +95,39 @@
         createApp({
             data() {
                 return {
-                    users: null,
-                    nameV: ''
+                    formulario: false,
+                    nameForm: '', 
+                    usernameForm: '',
+                    emailForm: '',
+                    passwordForm: '',
+                    phoneForm: '',
+                    websiteForm: ''
                 } 
             },
             methods: {
-                modificar() {
-                    var tme_email = this.email
-                    var tmp_pwd = this.password
-                    var tmu = null
+                register() {
+                    this.formulario = false;
 
-                    var access = this.users.map(function(u) {
-                        if (tme_email === u.email) {
-                            if (tmp_pwd === u.password) {
+                    this.users.push({
+                        name: this.nameForm,
+                        username: this.usernameForm,
+                        email: this.emailForm,
+                        password: this.passwordForm,
+                        phone: this.phoneForm,
+                        website: this.websiteForm,
+                    });
 
-                                alert('Acceso Correcto')
-
-                                var tmu = {
-                                    name: u.name,
-                                    username: u.username,
-                                    email: u.email
-                                }
-
-                                localStorage.setItem('user', JSON.stringify(tmu))
-
-                                window.location.href = "users.html";
-                                return true;
-                            }
-                        }
-                    })
+                    this.nameForm = '',
+                        this.usernameForm = '',
+                        this.emailForm = '',
+                        this.passwordForm = '',
+                        this.phoneForm = '',
+                        this.websiteForm = ''
+                },
+                closeSesion() {
+                    localStorage.removeItem('user');
+                    window.location.href = "index.html";
                 }
-
-
             },
             mounted() {
                 var u = localStorage.getItem('user')
@@ -92,7 +141,7 @@
             }
         }).mount('#contenedor')
     </script>
-    
+
      <style>
         table, th, td {
             border: 1px solid black;
