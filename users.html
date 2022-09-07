@@ -86,7 +86,7 @@
             
         </fieldset>
     </div>
-    <button @click="cs">Cerrar Sesión</button>
+    <button @click="closeRegister">Cerrar Sesión</button>
 </div>
 
     <script src="https://unpkg.com/vue@3"></script>
@@ -124,7 +124,7 @@
                         this.phoneForm = '',
                         this.websiteForm = ''
                 },
-                closeSesion() {
+                closeRegister() {
                     localStorage.removeItem('user');
                     window.location.href = "index.html";
                 }
