@@ -13,11 +13,11 @@
           <legend>Iniciar Sesión</legend>
           <label for="">
               Correo electrónico:
-              <input type="text" v-model="email" required>
+              <input type="text" v-model="email" required placeholder="correo">
           </label>
           <label for="">
               Contraseña:
-              <input type="password" v-model="password" required>
+              <input type="password" v-model="password" required placeholder="contraseña">
           </label>
 
           <button @click="login">Entrar</button>
@@ -53,6 +53,8 @@
                           localStorage.setItem('user',JSON.stringify(tmu))
                           window.location.href="users.html";                            
                           return true;
+                      }else {
+                        alert('Acceso Incorrecto')
                       }
                   }
               })

@@ -17,6 +17,9 @@
         <form action="" id="form">
             <fieldset>
                 <legend>Registro de Usuario</legend>
+                <legend v-show="!editarForm">Registrar</legend>
+                <legend v-show="editarForm">Editar</legend>
+                
                 <label for="">
                     Nombre Completo:
                     <input type="text" v-model="nameForm" required>
@@ -31,10 +34,10 @@
                     Correo Electrónico:
                     <input type="email" v-model="emailForm" required>
                 </label>
-                <hr>
-                <label for="">
+                <hr v-show="!editarForm">
+                <label for="" v-show="!editarForm">
                     Contraseña:
-                    <input type="password" v-model="passwordForm" required>
+                    <input type="password"  v-model="passwordForm">
                 </label>
                 <hr>
                 <label for="">
@@ -47,7 +50,7 @@
                     <input type="text" v-model="websiteForm" required>
                 </label>
                 <hr>
-                <button @click="register" type="submit">Entrar</button>
+                <button @click="register">Guardar Usuario</button>
             </fieldset>
         </form>
 
@@ -61,6 +64,7 @@
             <table>
                 <thead>
                     <tr>
+                        <th>ID</th>
                         <th>Nombre</th>
                         <th>Sobrenombre</th>
                         <th>Correo</th>
@@ -71,19 +75,21 @@
                 </thead>
                 <tbody>
                     <tr v-for="u in users">
+                        
+                        <td>{{u.id}}</td>
                         <td>{{u.name}}</td>
                         <td>{{u.username}}</td>
                         <td>{{u.email}}</td>
                         <td>{{u.phone}}</td>
                         <td>{{u.website}}</td>
                         <td>
-                            <button>Modificar</button>
-                            <button>Eliminar</button>
+                            <button @click="fillForm(u)">Modificar</button>
+                            <button @click="deleteUser(u.id)">Eliminar</button>
                         </td>
                     </tr>
                 </tbody>
             </table>
-            
+           
         </fieldset>
     </div>
     <button @click="closeRegister">Cerrar Sesión</button>
@@ -91,12 +97,16 @@
 
     <script src="https://unpkg.com/vue@3"></script>
     <script type="text/javascript">
+        var id = 0
         const { createApp } = Vue
         createApp({
             data() {
                 return {
+                    users: null,
                     formulario: false,
-                    nameForm: '', 
+                    editarForm: false,
+                    numberId: '',
+                    nameForm: '',
                     usernameForm: '',
                     emailForm: '',
                     passwordForm: '',
@@ -105,29 +115,59 @@
                 } 
             },
             methods: {
-                register() {
+                register() { //para registrar o añadir usuario
+                    if (this.editarForm) {
+                        this.users.splice(this.numberId - 1, 1, ({
+                            id: this.numberId,
+                            name: this.nameForm,
+                            username: this.usernameForm,
+                            email: this.emailForm,
+                            password: this.passwordForm,
+                            phone: this.phoneForm,
+                            website: this.websiteForm,
+                        }))
+                    } else {
+                        id += 1;
+                        this.users.push({
+                            id: id,
+                            name: this.nameForm,
+                            username: this.usernameForm,
+                            email: this.emailForm,
+                            phone: this.phoneForm,
+                            website: this.websiteForm,
+                        });
+                    }
+                    this.numberId = ''
+                    this.nameForm = ''
+                    this.usernameForm = ''
+                    this.emailForm = ''
+                    this.passwordForm = ''
+                    this.phoneForm = ''
+                    this.websiteForm = ''
                     this.formulario = false;
-
-                    this.users.push({
-                        name: this.nameForm,
-                        username: this.usernameForm,
-                        email: this.emailForm,
-                        password: this.passwordForm,
-                        phone: this.phoneForm,
-                        website: this.websiteForm,
-                    });
-
-                    this.nameForm = '',
-                        this.usernameForm = '',
-                        this.emailForm = '',
-                        this.passwordForm = '',
-                        this.phoneForm = '',
-                        this.websiteForm = ''
-                },
-                closeRegister() {
+                    this.editarForm = false;
+                    },
+                closeRegister() { // para cerrar sesión
                     localStorage.removeItem('user');
                     window.location.href = "index.html";
+                },
+                fillForm(u) { //para llenar con otros datos el formulario
+                    this.editarForm= true;
+                    this.formulario = true;
+                    this.numberId = u.id
+                    this.nameForm = u.name
+                    this.usernameForm = u.username
+                    this.emailForm = u.email
+                    this.passwordForm = u.password
+                    this.phoneForm = u.phone
+                    this.websiteForm = u.website
+                },
+                deleteUser(id2) { //para eliminar usuario
+                    id2 -= 1;
+                    this.users.splice(id2, 1);
+                      console.log(id2);
                 }
+                
             },
             mounted() {
                 var u = localStorage.getItem('user')
@@ -136,7 +176,7 @@
                 this.nameV = user.name
                 fetch('users.json')
                     .then((res) => res.json()) 
-                    .then((json) => (this.users = json))
+                    .then((json) => (this.users = json, id = json.length))
                     .catch((err) => (alert('no data')))
             }
         }).mount('#contenedor')
